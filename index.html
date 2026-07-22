@@ -8,6 +8,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- JS Canvas Confetti kütüphanesi -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     
     <style>
         :root {
@@ -38,7 +40,7 @@
             display: flex;
             flex-direction: column;
             padding: 15px;
-            overflow: hidden; /* Scroll yapılmasını engeller */
+            overflow: hidden;
         }
 
         header {
@@ -73,17 +75,17 @@
             font-size: 0.85rem;
         }
 
-        /* DOKU GRID DÜZENİ */
+        /* GRID DÜZENİ */
         main {
             width: 100%;
             flex: 1;
             display: grid;
             grid-template-columns: 280px 1fr 340px;
             gap: 12px;
-            min-height: 0; /* İçerik taşmasını engeller */
+            min-height: 0;
         }
 
-        /* SOL PANEL: İSTATİSTİK & GRAFİK */
+        /* SOL PANEL */
         .left-panel {
             display: flex;
             flex-direction: column;
@@ -100,7 +102,7 @@
             background-color: var(--card-bg);
             border: 1px solid var(--border-color);
             border-radius: 12px;
-            padding: 10px 15px;
+            padding: 12px 15px;
             text-align: center;
         }
 
@@ -109,11 +111,11 @@
             color: var(--text-muted);
             text-transform: uppercase;
             letter-spacing: 1px;
-            margin-bottom: 2px;
+            margin-bottom: 4px;
         }
 
         .stat-card .value {
-            font-size: 1.4rem;
+            font-size: 1.5rem;
             font-weight: 700;
             color: var(--accent-color);
         }
@@ -122,7 +124,7 @@
             background-color: var(--card-bg);
             border: 1px solid var(--border-color);
             border-radius: 12px;
-            padding: 12px;
+            padding: 15px;
             flex: 1;
             display: flex;
             flex-direction: column;
@@ -344,7 +346,7 @@
             display: flex;
             flex-direction: column;
             gap: 8px;
-            overflow-y: auto; /* Çok görev olursa sadece liste içinde scroll olsun */
+            overflow-y: auto;
             padding-right: 4px;
             flex: 1;
         }
@@ -439,7 +441,7 @@
             padding: 15px 0;
         }
 
-        /* --- TAM EKRAN (ZEN MODE) STİLLERİ --- */
+        /* ZEN MODE (TAM EKRAN) */
         .timer-card.zen-mode {
             position: fixed;
             top: 0;
@@ -476,7 +478,7 @@
     </header>
 
     <main>
-        <!-- SOL PANEL: İSTATİSTİK & GRAFİK -->
+        <!-- SOL PANEL -->
         <div class="left-panel">
             <div class="stats-grid">
                 <div class="stat-card">
@@ -495,7 +497,7 @@
             </div>
         </div>
 
-        <!-- ORTA PANEL: POMODORO SAYAÇ -->
+        <!-- ORTA PANEL: SAYAÇ -->
         <div class="timer-card" id="timer-card">
             <button class="fullscreen-toggle" onclick="toggleFullscreen()">⛶ Tam Ekran</button>
             
@@ -539,10 +541,13 @@
     </main>
 
     <script>
-        /* --- LOCAL STORAGE VE GRAFİK --- */
+        /* --- GEÇMİŞ İSTATİSTİKLERİ SIFIRLAMA KODU --- */
+        // Eski test verilerini tamamen temizliyoruz:
+        localStorage.removeItem('focuslab_history');
+
         const TODAY_KEY = new Date().toISOString().split('T')[0];
-        let historyData = JSON.parse(localStorage.getItem('focuslab_history')) || {};
-        if (!historyData[TODAY_KEY]) historyData[TODAY_KEY] = 0;
+        let historyData = {};
+        historyData[TODAY_KEY] = 0;
 
         function updateStatsDisplay() {
             const todayPomos = historyData[TODAY_KEY] || 0;
@@ -588,8 +593,8 @@
             });
         }
 
-        /* --- SAYAÇ VE TAM EKRAN (ZEN MODE) --- */
-        let timeLeft = 40 * 60; 
+        /* --- SAYAÇ, KONFETİ VE BİTİŞ MELODİSİ --- */
+        let timeLeft = 40 * 60; // 40 dakikaya çekildi
         let timerId = null;
         let isWorkMode = true;
 
@@ -605,29 +610,51 @@
             document.querySelector('.fullscreen-toggle').textContent = isZen ? "✕ Küçült" : "⛶ Tam Ekran";
         }
 
-        // ESC tuşu ile tam ekrandan çıkma
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape' && timerCard.classList.contains('zen-mode')) {
                 toggleFullscreen();
             }
         });
 
-        function playBeep() {
+        // Test ettiğimiz ve beğendiğin 2 kez çalan melodi
+        function playSuccessChime() {
             try {
                 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                const oscillator = audioCtx.createOscillator();
-                const gainNode = audioCtx.createGain();
+                const notes = [659.25, 783.99, 1046.50]; 
+                
+                const playSequence = (delayOffset) => {
+                    notes.forEach((freq, index) => {
+                        const osc = audioCtx.createOscillator();
+                        const gain = audioCtx.createGain();
 
-                oscillator.type = 'sine';
-                oscillator.frequency.setValueAtTime(587.33, audioCtx.currentTime);
-                gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                        osc.type = 'triangle'; 
+                        osc.frequency.setValueAtTime(freq, audioCtx.currentTime + delayOffset + (index * 0.12));
 
-                oscillator.connect(gainNode);
-                gainNode.connect(audioCtx.destination);
+                        gain.gain.setValueAtTime(0.4, audioCtx.currentTime + delayOffset + (index * 0.12));
+                        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + delayOffset + (index * 0.12) + 0.5);
 
-                oscillator.start();
-                oscillator.stop(audioCtx.currentTime + 0.8);
+                        osc.connect(gain);
+                        gain.connect(audioCtx.destination);
+
+                        osc.start(audioCtx.currentTime + delayOffset + (index * 0.12));
+                        osc.stop(audioCtx.currentTime + delayOffset + (index * 0.12) + 0.5);
+                    });
+                };
+
+                playSequence(0);
+                playSequence(0.7);
+
             } catch(e) {}
+        }
+
+        function triggerConfetti() {
+            if (typeof confetti === 'function') {
+                confetti({
+                    particleCount: 120,
+                    spread: 80,
+                    origin: { y: 0.6 }
+                });
+            }
         }
 
         function updateDisplay() {
@@ -648,15 +675,17 @@
                     } else {
                         clearInterval(timerId);
                         timerId = null;
-                        playBeep();
+                        
+                        playSuccessChime();
+                        triggerConfetti();
 
                         if (isWorkMode) {
                             historyData[TODAY_KEY] = (historyData[TODAY_KEY] || 0) + 1;
                             localStorage.setItem('focuslab_history', JSON.stringify(historyData));
                             updateStatsDisplay();
-                            alert("Odaklanma bitti! +1 Pomodoro kazandın! 🎉");
+                            alert("Tebrikler! 40 dakikalık odaklanma oturumu tamamlandı! 🎉");
                         } else {
-                            alert("Mola bitti! Çalışmaya dönme vakti. 💪");
+                            alert("Mola süresi doldu, yeni bir oturuma hazırsın! 💪");
                         }
 
                         startBtn.textContent = "Başlat";
@@ -697,7 +726,7 @@
             resetTimer();
         }
 
-        /* --- GÖREV LİSTESİ MANTIĞI --- */
+        /* --- GÖREV LİSTESİ --- */
         let todos = JSON.parse(localStorage.getItem('focuslab_todos')) || [];
 
         function saveTodos() {
