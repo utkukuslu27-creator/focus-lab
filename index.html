@@ -385,25 +385,39 @@
             border: 1px solid var(--border-color);
             padding: 8px 12px;
             border-radius: 6px;
-        }
-
-        .todo-item.completed span.task-text {
-            text-decoration: line-through;
-            color: var(--text-muted);
+            gap: 10px;
         }
 
         .todo-left {
             display: flex;
             align-items: center;
             gap: 8px;
-            cursor: pointer;
             flex: 1;
             overflow: hidden;
         }
 
-        .todo-checkbox {
-            accent-color: var(--accent-color);
+        /* SAĞDAKİ TIK BUTONU STİLİ */
+        .todo-check-btn {
+            width: 22px;
+            height: 22px;
+            border-radius: 6px;
+            border: 2px solid var(--border-color);
+            background: transparent;
             cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            flex-shrink: 0;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .todo-check-btn:hover {
+            border-color: var(--success-color);
+            color: var(--success-color);
+            background-color: rgba(34, 197, 94, 0.15);
         }
 
         .task-text {
@@ -416,7 +430,7 @@
         .badge-group {
             display: flex;
             gap: 4px;
-            margin-left: 6px;
+            margin-left: 4px;
         }
 
         .badge {
@@ -445,19 +459,6 @@
         .badge-priority-low {
             background-color: rgba(34, 197, 94, 0.15);
             color: #86efac;
-        }
-
-        .btn-delete {
-            background: transparent;
-            border: none;
-            color: var(--text-muted);
-            cursor: pointer;
-            font-size: 0.9rem;
-            padding: 2px 4px;
-        }
-
-        .btn-delete:hover {
-            color: var(--danger-color);
         }
 
         .empty-state {
@@ -772,22 +773,21 @@
 
             todos.forEach((todo, index) => {
                 const li = document.createElement('li');
-                li.className = `todo-item ${todo.completed ? 'completed' : ''}`;
+                li.className = 'todo-item';
                 
                 let priorityClass = 'badge-priority-mid';
                 if (todo.priority === 'Yüksek') priorityClass = 'badge-priority-high';
                 if (todo.priority === 'Düşük') priorityClass = 'badge-priority-low';
 
                 li.innerHTML = `
-                    <div class="todo-left" onclick="toggleTodo(${index})">
-                        <input type="checkbox" class="todo-checkbox" ${todo.completed ? 'checked' : ''}>
+                    <div class="todo-left">
                         <span class="task-text">${todo.text}</span>
                         <div class="badge-group">
                             <span class="badge badge-category">${todo.category || 'Ders'}</span>
                             <span class="badge ${priorityClass}">${todo.priority || 'Orta'}</span>
                         </div>
                     </div>
-                    <button class="btn-delete" onclick="deleteTodo(${index})">🗑️</button>
+                    <button class="todo-check-btn" onclick="completeAndRemoveTodo(${index})" title="Görevi Tamamla ve Sil">✓</button>
                 `;
                 todoList.appendChild(li);
             });
@@ -803,8 +803,7 @@
                 todos.push({ 
                     text: text, 
                     category: categorySelect.value,
-                    priority: prioritySelect.value,
-                    completed: false 
+                    priority: prioritySelect.value
                 });
                 input.value = '';
                 saveTodos();
@@ -816,13 +815,7 @@
             if (event.key === 'Enter') addTodo();
         }
 
-        function toggleTodo(index) {
-            todos[index].completed = !todos[index].completed;
-            saveTodos();
-            renderTodos();
-        }
-
-        function deleteTodo(index) {
+        function completeAndRemoveTodo(index) {
             todos.splice(index, 1);
             saveTodos();
             renderTodos();
