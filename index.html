@@ -19,7 +19,6 @@
             --text-muted: #94a3b8;
             --border-color: #334155;
             --fire-color: #f97316;
-            --success-color: #22c55e;
             --danger-color: #ef4444;
         }
 
@@ -114,7 +113,7 @@
             background-color: var(--card-bg);
             border: 1px solid var(--border-color);
             border-radius: 16px;
-            padding: 30px;
+            padding: 35px 30px;
             text-align: center;
             box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
         }
@@ -144,10 +143,10 @@
         }
 
         .timer-display {
-            font-size: 5rem;
+            font-size: 5.5rem;
             font-weight: 700;
             letter-spacing: 2px;
-            margin: 15px 0;
+            margin: 20px 0;
             font-variant-numeric: tabular-nums;
         }
 
@@ -359,11 +358,11 @@
         
         function updateStatsDisplay() {
             document.getElementById('pomo-count').textContent = completedPomos;
-            const totalMinutes = completedPomos * 40; // Her Pomodoro 40 Dk
+            const totalMinutes = completedPomos * 40;
             document.getElementById('total-time').textContent = `${totalMinutes} dk`;
         }
 
-        /* --- SAYAÇ VE SES MANTIĞI --- */
+        /* --- SAYAÇ VE BİDİRİM SESİ MANTIĞI --- */
         let timeLeft = 40 * 60; 
         let timerId = null;
         let isWorkMode = true;
@@ -423,6 +422,7 @@
                         }
 
                         startBtn.textContent = "Başlat";
+                        startBtn.style.backgroundColor = "var(--accent-color)";
                     }
                 }, 1000);
                 startBtn.textContent = "Durdur";
@@ -519,7 +519,6 @@
             renderTodos();
         }
 
-        // Sayfa yüklendiğinde çağrılanlar
         renderTodos();
         updateStatsDisplay();
     </script>
