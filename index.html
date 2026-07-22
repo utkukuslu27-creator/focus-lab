@@ -20,6 +20,8 @@
             --border-color: #334155;
             --fire-color: #f97316;
             --danger-color: #ef4444;
+            --success-color: #22c55e;
+            --warning-color: #eab308;
         }
 
         * {
@@ -32,28 +34,28 @@
         body {
             background-color: var(--bg-color);
             color: var(--text-main);
-            min-height: 100vh;
+            height: 100vh;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            padding: 20px;
+            padding: 15px;
+            overflow: hidden; /* Scroll yapılmasını engeller */
         }
 
         header {
             width: 100%;
-            max-width: 800px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 15px 20px;
+            padding: 10px 20px;
             background-color: var(--card-bg);
             border: 1px solid var(--border-color);
             border-radius: 12px;
-            margin-bottom: 25px;
+            margin-bottom: 12px;
+            height: 55px;
         }
 
         .logo {
-            font-size: 1.4rem;
+            font-size: 1.2rem;
             font-weight: 700;
         }
 
@@ -65,73 +67,164 @@
             background-color: rgba(249, 115, 22, 0.1);
             border: 1px solid rgba(249, 115, 22, 0.3);
             color: var(--fire-color);
-            padding: 6px 14px;
+            padding: 4px 12px;
             border-radius: 20px;
             font-weight: 600;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
         }
 
+        /* DOKU GRID DÜZENİ */
         main {
             width: 100%;
-            max-width: 800px;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
+            flex: 1;
+            display: grid;
+            grid-template-columns: 280px 1fr 340px;
+            gap: 12px;
+            min-height: 0; /* İçerik taşmasını engeller */
         }
 
-        /* İSTATİSTİK KARTLARI */
+        /* SOL PANEL: İSTATİSTİK & GRAFİK */
+        .left-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
         .stats-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
+            grid-template-columns: 1fr;
+            gap: 8px;
         }
 
         .stat-card {
             background-color: var(--card-bg);
             border: 1px solid var(--border-color);
             border-radius: 12px;
-            padding: 15px 20px;
+            padding: 10px 15px;
             text-align: center;
         }
 
         .stat-card h3 {
-            font-size: 0.85rem;
+            font-size: 0.75rem;
             color: var(--text-muted);
             text-transform: uppercase;
             letter-spacing: 1px;
-            margin-bottom: 5px;
+            margin-bottom: 2px;
         }
 
         .stat-card .value {
-            font-size: 1.8rem;
+            font-size: 1.4rem;
             font-weight: 700;
             color: var(--accent-color);
         }
 
-        /* POMODORO KARTI */
+        .analytics-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 12px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .analytics-card h2 {
+            font-size: 0.9rem;
+            color: var(--text-main);
+            margin-bottom: 10px;
+        }
+
+        .bar-chart {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            flex: 1;
+            gap: 6px;
+            padding-top: 10px;
+        }
+
+        .bar-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100%;
+            justify-content: flex-end;
+        }
+
+        .bar {
+            width: 100%;
+            background-color: var(--accent-color);
+            border-radius: 4px 4px 0 0;
+            transition: height 0.4s ease;
+            min-height: 4px;
+            opacity: 0.85;
+        }
+
+        .bar-container.active .bar {
+            background-color: var(--fire-color);
+            opacity: 1;
+        }
+
+        .bar-label {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            margin-top: 6px;
+        }
+
+        .bar-val {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            margin-bottom: 2px;
+        }
+
+        /* ORTA PANEL: POMODORO SAYAÇ */
         .timer-card {
             background-color: var(--card-bg);
             border: 1px solid var(--border-color);
             border-radius: 16px;
-            padding: 35px 30px;
-            text-align: center;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
             box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+        }
+
+        .fullscreen-toggle {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.2s;
+        }
+
+        .fullscreen-toggle:hover {
+            color: var(--text-main);
+            background: rgba(255, 255, 255, 0.1);
         }
 
         .mode-buttons {
             display: flex;
-            justify-content: center;
             gap: 10px;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
 
         .mode-btn {
             background: transparent;
             border: 1px solid var(--border-color);
             color: var(--text-muted);
-            padding: 8px 16px;
+            padding: 6px 14px;
             border-radius: 8px;
             cursor: pointer;
+            font-size: 0.85rem;
             font-weight: 600;
             transition: all 0.2s;
         }
@@ -143,27 +236,26 @@
         }
 
         .timer-display {
-            font-size: 5.5rem;
+            font-size: 5rem;
             font-weight: 700;
             letter-spacing: 2px;
-            margin: 20px 0;
+            margin: 15px 0;
             font-variant-numeric: tabular-nums;
         }
 
         .controls {
             display: flex;
-            justify-content: center;
-            gap: 15px;
+            gap: 12px;
         }
 
         .btn {
-            padding: 12px 28px;
-            font-size: 1rem;
+            padding: 10px 24px;
+            font-size: 0.95rem;
             font-weight: 600;
             border: none;
             border-radius: 8px;
             cursor: pointer;
-            transition: transform 0.1s, opacity 0.2s;
+            transition: transform 0.1s;
         }
 
         .btn:active {
@@ -175,80 +267,86 @@
             color: white;
         }
 
-        .btn-start:hover {
-            background-color: var(--accent-hover);
-        }
-
         .btn-reset {
             background-color: transparent;
             border: 1px solid var(--border-color);
             color: var(--text-muted);
         }
 
-        .btn-reset:hover {
-            color: var(--text-main);
-            background-color: rgba(255, 255, 255, 0.05);
-        }
-
-        /* GÖREV LİSTESİ KARTI */
+        /* SAĞ PANEL: GÖREV LİSTESİ */
         .todo-card {
             background-color: var(--card-bg);
             border: 1px solid var(--border-color);
             border-radius: 16px;
-            padding: 25px;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
         }
 
         .todo-card h2 {
-            font-size: 1.2rem;
-            margin-bottom: 15px;
+            font-size: 1rem;
+            margin-bottom: 10px;
             color: var(--text-main);
-            display: flex;
-            align-items: center;
-            gap: 8px;
         }
 
-        .todo-input-group {
+        .todo-input-container {
             display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .todo-input-row {
+            display: flex;
+            gap: 8px;
         }
 
         .todo-input {
             flex: 1;
             background-color: var(--bg-color);
             border: 1px solid var(--border-color);
-            padding: 12px 16px;
-            border-radius: 8px;
+            padding: 8px 12px;
+            border-radius: 6px;
             color: var(--text-main);
-            font-size: 0.95rem;
+            font-size: 0.85rem;
             outline: none;
         }
 
-        .todo-input:focus {
-            border-color: var(--accent-color);
+        .todo-selects {
+            display: flex;
+            gap: 6px;
+        }
+
+        .todo-select {
+            flex: 1;
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 6px 8px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            outline: none;
         }
 
         .btn-add {
             background-color: var(--accent-color);
             color: white;
             border: none;
-            padding: 0 20px;
-            border-radius: 8px;
+            padding: 0 14px;
+            border-radius: 6px;
             font-weight: 600;
             cursor: pointer;
-            transition: background-color 0.2s;
-        }
-
-        .btn-add:hover {
-            background-color: var(--accent-hover);
+            font-size: 0.85rem;
         }
 
         .todo-list {
             list-style: none;
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 8px;
+            overflow-y: auto; /* Çok görev olursa sadece liste içinde scroll olsun */
+            padding-right: 4px;
+            flex: 1;
         }
 
         .todo-item {
@@ -257,12 +355,11 @@
             justify-content: space-between;
             background-color: rgba(255, 255, 255, 0.03);
             border: 1px solid var(--border-color);
-            padding: 12px 16px;
-            border-radius: 8px;
-            transition: all 0.2s;
+            padding: 8px 12px;
+            border-radius: 6px;
         }
 
-        .todo-item.completed span {
+        .todo-item.completed span.task-text {
             text-decoration: line-through;
             color: var(--text-muted);
         }
@@ -270,15 +367,56 @@
         .todo-left {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 8px;
             cursor: pointer;
+            flex: 1;
+            overflow: hidden;
         }
 
         .todo-checkbox {
-            width: 18px;
-            height: 18px;
             accent-color: var(--accent-color);
             cursor: pointer;
+        }
+
+        .task-text {
+            font-size: 0.85rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .badge-group {
+            display: flex;
+            gap: 4px;
+            margin-left: 6px;
+        }
+
+        .badge {
+            font-size: 0.65rem;
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .badge-category {
+            background-color: rgba(99, 102, 241, 0.15);
+            color: #a5b4fc;
+        }
+
+        .badge-priority-high {
+            background-color: rgba(239, 68, 68, 0.15);
+            color: #fca5a5;
+        }
+
+        .badge-priority-mid {
+            background-color: rgba(234, 179, 8, 0.15);
+            color: #fde047;
+        }
+
+        .badge-priority-low {
+            background-color: rgba(34, 197, 94, 0.15);
+            color: #86efac;
         }
 
         .btn-delete {
@@ -286,10 +424,8 @@
             border: none;
             color: var(--text-muted);
             cursor: pointer;
-            font-size: 1.1rem;
-            padding: 4px 8px;
-            border-radius: 4px;
-            transition: color 0.2s;
+            font-size: 0.9rem;
+            padding: 2px 4px;
         }
 
         .btn-delete:hover {
@@ -299,8 +435,36 @@
         .empty-state {
             text-align: center;
             color: var(--text-muted);
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             padding: 15px 0;
+        }
+
+        /* --- TAM EKRAN (ZEN MODE) STİLLERİ --- */
+        .timer-card.zen-mode {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 9999;
+            border-radius: 0;
+            border: none;
+            background-color: var(--bg-color);
+        }
+
+        .timer-card.zen-mode .timer-display {
+            font-size: 14rem;
+            margin: 40px 0;
+        }
+
+        .timer-card.zen-mode .mode-btn {
+            font-size: 1.1rem;
+            padding: 10px 20px;
+        }
+
+        .timer-card.zen-mode .btn {
+            padding: 16px 40px;
+            font-size: 1.2rem;
         }
     </style>
 </head>
@@ -308,26 +472,35 @@
 
     <header>
         <div class="logo">🧪 Focus<span>Lab</span></div>
-        <div class="streak-badge">🔥 1 Günlük Seri</div>
+        <div class="streak-badge">🔥 <span id="streak-count">1</span> Günlük Seri</div>
     </header>
 
     <main>
-        <!-- İSTATİSTİK PANANELİ -->
-        <div class="stats-grid">
-            <div class="stat-card">
-                <h3>Tamamlanan Pomodoro</h3>
-                <div class="value" id="pomo-count">0</div>
+        <!-- SOL PANEL: İSTATİSTİK & GRAFİK -->
+        <div class="left-panel">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3>Bugün Tamamlanan</h3>
+                    <div class="value" id="pomo-count">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Toplam Odak Süresi</h3>
+                    <div class="value" id="total-time">0 dk</div>
+                </div>
             </div>
-            <div class="stat-card">
-                <h3>Toplam Odak Süresi</h3>
-                <div class="value" id="total-time">0 dk</div>
+
+            <div class="analytics-card">
+                <h2>📊 Son 7 Günlük Performans</h2>
+                <div class="bar-chart" id="bar-chart"></div>
             </div>
         </div>
 
-        <!-- POMODORO SAYAÇ ALANI -->
-        <div class="timer-card">
+        <!-- ORTA PANEL: POMODORO SAYAÇ -->
+        <div class="timer-card" id="timer-card">
+            <button class="fullscreen-toggle" onclick="toggleFullscreen()">⛶ Tam Ekran</button>
+            
             <div class="mode-buttons">
-                <button class="mode-btn active" id="mode-work" onclick="setMode('work')">🎯 Odaklanma (40dk)</button>
+                <button class="mode-btn active" id="mode-work" onclick="setMode('work')">🎯 Odak (40dk)</button>
                 <button class="mode-btn" id="mode-break" onclick="setMode('break')">☕ Mola (10dk)</button>
             </div>
 
@@ -339,30 +512,83 @@
             </div>
         </div>
 
-        <!-- GÖREV LİSTESİ ALANI -->
+        <!-- SAĞ PANEL: GÖREV LİSTESİ -->
         <div class="todo-card">
-            <h2>📋 Bugünkü Görevler</h2>
-            <div class="todo-input-group">
-                <input type="text" id="todo-input" class="todo-input" placeholder="Yeni bir görev yazın ve Enter'a basın..." onkeypress="handleKeyPress(event)">
-                <button class="btn-add" onclick="addTodo()">Ekle</button>
+            <h2>📋 Görevler</h2>
+            <div class="todo-input-container">
+                <div class="todo-input-row">
+                    <input type="text" id="todo-input" class="todo-input" placeholder="Yeni görev..." onkeypress="handleKeyPress(event)">
+                    <button class="btn-add" onclick="addTodo()">Ekle</button>
+                </div>
+                <div class="todo-selects">
+                    <select id="todo-category" class="todo-select">
+                        <option value="Ders">📚 Ders</option>
+                        <option value="Proje">💻 Proje</option>
+                        <option value="Sınav">📝 Sınav</option>
+                        <option value="Kişisel">👤 Kişisel</option>
+                    </select>
+                    <select id="todo-priority" class="todo-select">
+                        <option value="Yüksek">🔴 Yüksek</option>
+                        <option value="Orta" selected>🟡 Orta</option>
+                        <option value="Düşük">🟢 Düşük</option>
+                    </select>
+                </div>
             </div>
-            <ul id="todo-list" class="todo-list">
-                <!-- Görevler JS ile buraya eklenecek -->
-            </ul>
+            <ul id="todo-list" class="todo-list"></ul>
         </div>
     </main>
 
     <script>
-        /* --- İSTATİSTİK MANTIĞI --- */
-        let completedPomos = parseInt(localStorage.getItem('focuslab_pomos')) || 0;
-        
+        /* --- LOCAL STORAGE VE GRAFİK --- */
+        const TODAY_KEY = new Date().toISOString().split('T')[0];
+        let historyData = JSON.parse(localStorage.getItem('focuslab_history')) || {};
+        if (!historyData[TODAY_KEY]) historyData[TODAY_KEY] = 0;
+
         function updateStatsDisplay() {
-            document.getElementById('pomo-count').textContent = completedPomos;
-            const totalMinutes = completedPomos * 40;
-            document.getElementById('total-time').textContent = `${totalMinutes} dk`;
+            const todayPomos = historyData[TODAY_KEY] || 0;
+            document.getElementById('pomo-count').textContent = todayPomos;
+            
+            let totalPomosAllTime = 0;
+            Object.values(historyData).forEach(val => totalPomosAllTime += val);
+            document.getElementById('total-time').textContent = `${totalPomosAllTime * 40} dk`;
+
+            renderChart();
         }
 
-        /* --- SAYAÇ VE BİDİRİM SESİ MANTIĞI --- */
+        function renderChart() {
+            const chartContainer = document.getElementById('bar-chart');
+            chartContainer.innerHTML = '';
+
+            const days = [];
+            for (let i = 6; i >= 0; i--) {
+                const d = new Date();
+                d.setDate(d.getDate() - i);
+                days.push(d.toISOString().split('T')[0]);
+            }
+
+            let maxPomo = 1;
+            days.forEach(day => {
+                if ((historyData[day] || 0) > maxPomo) maxPomo = historyData[day];
+            });
+
+            days.forEach(day => {
+                const count = historyData[day] || 0;
+                const heightPercent = Math.max((count / maxPomo) * 100, 6);
+                const dayLabel = new Date(day).toLocaleDateString('tr-TR', { weekday: 'short' });
+                const isToday = day === TODAY_KEY;
+
+                const barContainer = document.createElement('div');
+                barContainer.className = `bar-container ${isToday ? 'active' : ''}`;
+                barContainer.innerHTML = `
+                    <span class="bar-val">${count}</span>
+                    <div class="bar" style="height: ${heightPercent}%;"></div>
+                    <span class="bar-label">${isToday ? 'Bgn' : dayLabel}</span>
+                `;
+                chartContainer.appendChild(barContainer);
+            });
+        }
+
+        /* --- SAYAÇ VE TAM EKRAN (ZEN MODE) --- */
         let timeLeft = 40 * 60; 
         let timerId = null;
         let isWorkMode = true;
@@ -371,6 +597,20 @@
         const startBtn = document.getElementById('start-btn');
         const workBtn = document.getElementById('mode-work');
         const breakBtn = document.getElementById('mode-break');
+        const timerCard = document.getElementById('timer-card');
+
+        function toggleFullscreen() {
+            timerCard.classList.toggle('zen-mode');
+            const isZen = timerCard.classList.contains('zen-mode');
+            document.querySelector('.fullscreen-toggle').textContent = isZen ? "✕ Küçült" : "⛶ Tam Ekran";
+        }
+
+        // ESC tuşu ile tam ekrandan çıkma
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && timerCard.classList.contains('zen-mode')) {
+                toggleFullscreen();
+            }
+        });
 
         function playBeep() {
             try {
@@ -387,9 +627,7 @@
 
                 oscillator.start();
                 oscillator.stop(audioCtx.currentTime + 0.8);
-            } catch(e) {
-                console.log("Ses çalınamadı");
-            }
+            } catch(e) {}
         }
 
         function updateDisplay() {
@@ -413,12 +651,12 @@
                         playBeep();
 
                         if (isWorkMode) {
-                            completedPomos++;
-                            localStorage.setItem('focuslab_pomos', completedPomos);
+                            historyData[TODAY_KEY] = (historyData[TODAY_KEY] || 0) + 1;
+                            localStorage.setItem('focuslab_history', JSON.stringify(historyData));
                             updateStatsDisplay();
-                            alert("40 dakikalık odaklanma bitti! Tebrikler, +1 Pomodoro kazandın! 🎉");
+                            alert("Odaklanma bitti! +1 Pomodoro kazandın! 🎉");
                         } else {
-                            alert("10 dakikalık mola bitti! Çalışmaya dönme vakti. 💪");
+                            alert("Mola bitti! Çalışmaya dönme vakti. 💪");
                         }
 
                         startBtn.textContent = "Başlat";
@@ -471,17 +709,26 @@
             todoList.innerHTML = '';
 
             if (todos.length === 0) {
-                todoList.innerHTML = '<div class="empty-state">Henüz eklenmiş bir görev yok. Yukarıdan ekleyebilirsin! ✨</div>';
+                todoList.innerHTML = '<div class="empty-state">Henüz görev yok ✨</div>';
                 return;
             }
 
             todos.forEach((todo, index) => {
                 const li = document.createElement('li');
                 li.className = `todo-item ${todo.completed ? 'completed' : ''}`;
+                
+                let priorityClass = 'badge-priority-mid';
+                if (todo.priority === 'Yüksek') priorityClass = 'badge-priority-high';
+                if (todo.priority === 'Düşük') priorityClass = 'badge-priority-low';
+
                 li.innerHTML = `
                     <div class="todo-left" onclick="toggleTodo(${index})">
                         <input type="checkbox" class="todo-checkbox" ${todo.completed ? 'checked' : ''}>
-                        <span>${todo.text}</span>
+                        <span class="task-text">${todo.text}</span>
+                        <div class="badge-group">
+                            <span class="badge badge-category">${todo.category || 'Ders'}</span>
+                            <span class="badge ${priorityClass}">${todo.priority || 'Orta'}</span>
+                        </div>
                     </div>
                     <button class="btn-delete" onclick="deleteTodo(${index})">🗑️</button>
                 `;
@@ -491,10 +738,17 @@
 
         function addTodo() {
             const input = document.getElementById('todo-input');
+            const categorySelect = document.getElementById('todo-category');
+            const prioritySelect = document.getElementById('todo-priority');
             const text = input.value.trim();
 
             if (text !== '') {
-                todos.push({ text: text, completed: false });
+                todos.push({ 
+                    text: text, 
+                    category: categorySelect.value,
+                    priority: prioritySelect.value,
+                    completed: false 
+                });
                 input.value = '';
                 saveTodos();
                 renderTodos();
@@ -502,9 +756,7 @@
         }
 
         function handleKeyPress(event) {
-            if (event.key === 'Enter') {
-                addTodo();
-            }
+            if (event.key === 'Enter') addTodo();
         }
 
         function toggleTodo(index) {
