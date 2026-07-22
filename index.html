@@ -313,7 +313,7 @@
     </main>
 
     <script>
-        /* --- SAYAÇ MANTIĞI --- */
+        /* --- SAYAÇ MANTIĞI VE SES BİLDİRİMİ --- */
         let timeLeft = 40 * 60; 
         let timerId = null;
         let isWorkMode = true;
@@ -322,6 +322,27 @@
         const startBtn = document.getElementById('start-btn');
         const workBtn = document.getElementById('mode-work');
         const breakBtn = document.getElementById('mode-break');
+
+        // Tarayıcı içi bip sesi üretici (Harici dosyaya ihtiyaç duymaz)
+        function playBeep() {
+            try {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioCtx.createOscillator();
+                const gainNode = audioCtx.createGain();
+
+                oscillator.type = 'sine';
+                oscillator.frequency.setValueAtTime(587.33, audioCtx.currentTime); // D5 notası
+                gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+
+                oscillator.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
+
+                oscillator.start();
+                oscillator.stop(audioCtx.currentTime + 0.8);
+            } catch(e) {
+                console.log("Ses çalınamadı");
+            }
+        }
 
         function updateDisplay() {
             const minutes = Math.floor(timeLeft / 60);
@@ -341,6 +362,7 @@
                     } else {
                         clearInterval(timerId);
                         timerId = null;
+                        playBeep(); // Süre bitince zil çal!
                         alert(isWorkMode ? "40 dakikalık odaklanma süresi bitti! Mola zamanı! 🎉" : "10 dakikalık mola bitti! Çalışmaya dönme vakti. 💪");
                         startBtn.textContent = "Başlat";
                     }
@@ -379,7 +401,7 @@
             resetTimer();
         }
 
-        /* --- GÖREV LİSTESİ (TO-DO) MANTIĞI --- */
+        /* --- GÖREV LİSTESİ MANTIĞI --- */
         let todos = JSON.parse(localStorage.getItem('focuslab_todos')) || [];
 
         function saveTodos() {
@@ -439,7 +461,6 @@
             renderTodos();
         }
 
-        // Sayfa yüklendiğinde görevleri ekrana bas
         renderTodos();
     </script>
 </body>
