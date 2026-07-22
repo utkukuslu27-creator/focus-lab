@@ -10,7 +10,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     
     <style>
-        /* CSS TASARIM VE DARK MODE KODLARI */
         :root {
             --bg-color: #0f172a;
             --card-bg: #1e293b;
@@ -20,6 +19,8 @@
             --text-muted: #94a3b8;
             --border-color: #334155;
             --fire-color: #f97316;
+            --success-color: #22c55e;
+            --danger-color: #ef4444;
         }
 
         * {
@@ -39,10 +40,9 @@
             padding: 20px;
         }
 
-        /* HEADER / ÜST BAR */
         header {
             width: 100%;
-            max-width: 900px;
+            max-width: 800px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -50,16 +50,12 @@
             background-color: var(--card-bg);
             border: 1px solid var(--border-color);
             border-radius: 12px;
-            margin-bottom: 30px;
+            margin-bottom: 25px;
         }
 
         .logo {
             font-size: 1.4rem;
             font-weight: 700;
-            color: var(--text-main);
-            display: flex;
-            align-items: center;
-            gap: 8px;
         }
 
         .logo span {
@@ -74,58 +70,191 @@
             border-radius: 20px;
             font-weight: 600;
             font-size: 0.9rem;
-            display: flex;
-            align-items: center;
-            gap: 6px;
         }
 
-        /* MAIN CONTAINER */
         main {
             width: 100%;
-            max-width: 900px;
+            max-width: 800px;
             display: flex;
             flex-direction: column;
             gap: 20px;
         }
 
-        .welcome-card {
+        /* POMODORO KARTI */
+        .timer-card {
             background-color: var(--card-bg);
             border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 25px;
+            border-radius: 16px;
+            padding: 30px;
             text-align: center;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
         }
 
-        .welcome-card h1 {
-            font-size: 1.8rem;
-            margin-bottom: 8px;
+        .mode-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
         }
 
-        .welcome-card p {
+        .mode-btn {
+            background: transparent;
+            border: 1px solid var(--border-color);
             color: var(--text-muted);
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .mode-btn.active {
+            background-color: var(--accent-color);
+            color: white;
+            border-color: var(--accent-color);
+        }
+
+        .timer-display {
+            font-size: 5rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            margin: 15px 0;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .btn {
+            padding: 12px 28px;
             font-size: 1rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.1s, opacity 0.2s;
+        }
+
+        .btn:active {
+            transform: scale(0.96);
+        }
+
+        .btn-start {
+            background-color: var(--accent-color);
+            color: white;
+        }
+
+        .btn-start:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .btn-reset {
+            background-color: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+        }
+
+        .btn-reset:hover {
+            color: var(--text-main);
+            background-color: rgba(255, 255, 255, 0.05);
         }
     </style>
 </head>
 <body>
 
-    <!-- ÜST BAR: LOGO VE STREAK -->
     <header>
-        <div class="logo">
-            🧪 Focus<span>Lab</span>
-        </div>
-        <div class="streak-badge">
-            🔥 1 Günlük Seri
-        </div>
+        <div class="logo">🧪 Focus<span>Lab</span></div>
+        <div class="streak-badge">🔥 1 Günlük Seri</div>
     </header>
 
-    <!-- ANA İÇERİK ALANI -->
     <main>
-        <div class="welcome-card">
-            <h1>Hoş Geldin! 👋</h1>
-            <p>Bugünkü hedeflerine ulaşmak için odaklanmaya başla.</p>
+        <!-- POMODORO SAYAÇ ALANI -->
+        <div class="timer-card">
+            <div class="mode-buttons">
+                <button class="mode-btn active" id="mode-work" onclick="setMode('work')">🎯 Odaklanma (40dk)</button>
+                <button class="mode-btn" id="mode-break" onclick="setMode('break')">☕ Mola (10dk)</button>
+            </div>
+
+            <div class="timer-display" id="timer">40:00</div>
+
+            <div class="controls">
+                <button class="btn btn-start" id="start-btn" onclick="toggleTimer()">Başlat</button>
+                <button class="btn btn-reset" onclick="resetTimer()">Sıfırla</button>
+            </div>
         </div>
     </main>
 
+    <!-- SAYAÇ ÇALIŞMA MANTIĞI (JAVASCRIPT) -->
+    <script>
+        let timeLeft = 40 * 60; // 40 Dakika (Saniye cinsinden)
+        let timerId = null;
+        let isWorkMode = true;
+
+        const timerDisplay = document.getElementById('timer');
+        const startBtn = document.getElementById('start-btn');
+        const workBtn = document.getElementById('mode-work');
+        const breakBtn = document.getElementById('mode-break');
+
+        function updateDisplay() {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            const formattedTime = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            
+            timerDisplay.textContent = formattedTime;
+            document.title = `${formattedTime} - FocusLab 🧪`;
+        }
+
+        function toggleTimer() {
+            if (timerId === null) {
+                // Başlat
+                timerId = setInterval(() => {
+                    if (timeLeft > 0) {
+                        timeLeft--;
+                        updateDisplay();
+                    } else {
+                        clearInterval(timerId);
+                        timerId = null;
+                        alert(isWorkMode ? "40 dakikalık odaklanma süresi bitti! Mola zamanı! 🎉" : "10 dakikalık mola bitti! Çalışmaya dönme vakti. 💪");
+                        startBtn.textContent = "Başlat";
+                    }
+                }, 1000);
+                startBtn.textContent = "Durdur";
+                startBtn.style.backgroundColor = "var(--danger-color)";
+            } else {
+                // Durdur
+                clearInterval(timerId);
+                timerId = null;
+                startBtn.textContent = "Devam Et";
+                startBtn.style.backgroundColor = "var(--accent-color)";
+            }
+        }
+
+        function resetTimer() {
+            clearInterval(timerId);
+            timerId = null;
+            timeLeft = isWorkMode ? 40 * 60 : 10 * 60;
+            startBtn.textContent = "Başlat";
+            startBtn.style.backgroundColor = "var(--accent-color)";
+            updateDisplay();
+        }
+
+        function setMode(mode) {
+            if (mode === 'work') {
+                isWorkMode = true;
+                timeLeft = 40 * 60;
+                workBtn.classList.add('active');
+                breakBtn.classList.remove('active');
+            } else {
+                isWorkMode = false;
+                timeLeft = 10 * 60;
+                breakBtn.classList.add('active');
+                workBtn.classList.remove('active');
+            }
+            resetTimer();
+        }
+    </script>
 </body>
 </html>
