@@ -7,7 +7,7 @@
     <!-- Google Fonts: Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
     <!-- JS Canvas Confetti kütüphanesi -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     
@@ -52,7 +52,7 @@
             background-color: var(--card-bg);
             border: 1px solid var(--border-color);
             border-radius: 12px;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
             height: 55px;
         }
 
@@ -73,6 +73,32 @@
             border-radius: 20px;
             font-weight: 600;
             font-size: 0.85rem;
+        }
+
+        /* MOTİVASYON SÖZÜ BANNERI */
+        .quote-banner {
+            width: 100%;
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-left: 4px solid var(--accent-color);
+            border-radius: 8px;
+            padding: 8px 16px;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+
+        .quote-text {
+            font-size: 0.88rem;
+            font-weight: 600;
+            color: #e2e8f0;
+            letter-spacing: 0.3px;
+        }
+
+        .quote-author {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-left: 8px;
+            font-style: italic;
         }
 
         /* GRID DÜZENİ */
@@ -477,6 +503,12 @@
         <div class="streak-badge">🔥 <span id="streak-count">1</span> Günlük Seri</div>
     </header>
 
+    <!-- MOTİVASYON BANNERI -->
+    <div class="quote-banner">
+        <span class="quote-text">"Hiçbir şeye ihtiyacımız yoktur, yalnız bir şeye ihtiyacımız vardır: Çalışkan olmak!"</span>
+        <span class="quote-author">— K. Atatürk</span>
+    </div>
+
     <main>
         <!-- SOL PANEL -->
         <div class="left-panel">
@@ -541,13 +573,10 @@
     </main>
 
     <script>
-        /* --- GEÇMİŞ İSTATİSTİKLERİ SIFIRLAMA KODU --- */
-        // Eski test verilerini tamamen temizliyoruz:
-        localStorage.removeItem('focuslab_history');
-
+        /* --- GEÇMİŞ İSTATİSTİKLERİ --- */
         const TODAY_KEY = new Date().toISOString().split('T')[0];
-        let historyData = {};
-        historyData[TODAY_KEY] = 0;
+        let historyData = JSON.parse(localStorage.getItem('focuslab_history')) || {};
+        if (!historyData[TODAY_KEY]) historyData[TODAY_KEY] = 0;
 
         function updateStatsDisplay() {
             const todayPomos = historyData[TODAY_KEY] || 0;
@@ -594,7 +623,7 @@
         }
 
         /* --- SAYAÇ, KONFETİ VE BİTİŞ MELODİSİ --- */
-        let timeLeft = 40 * 60; // 40 dakikaya çekildi
+        let timeLeft = 40 * 60;
         let timerId = null;
         let isWorkMode = true;
 
@@ -616,7 +645,6 @@
             }
         });
 
-        // Test ettiğimiz ve beğendiğin 2 kez çalan melodi
         function playSuccessChime() {
             try {
                 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
