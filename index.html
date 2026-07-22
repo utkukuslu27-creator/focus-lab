@@ -3,826 +3,419 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FocusLab 🧪 | Dijital Çalışma Üssü</title>
-    <!-- Google Fonts: Inter -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
-    <!-- JS Canvas Confetti kütüphanesi -->
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-    
+    <title>GetFocusLab</title>
     <style>
         :root {
             --bg-color: #0f172a;
             --card-bg: #1e293b;
-            --accent-color: #6366f1;
-            --accent-hover: #4f46e5;
-            --text-main: #f8fafc;
-            --text-muted: #94a3b8;
-            --border-color: #334155;
-            --fire-color: #f97316;
-            --danger-color: #ef4444;
-            --success-color: #22c55e;
-            --warning-color: #eab308;
+            --text-color: #f8fafc;
+            --text-secondary: #94a3b8;
+            --accent: #3b82f6;
+            --accent-hover: #2563eb;
+            --success: #10b981;
+            --border: #334155;
         }
 
         * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
-            font-family: 'Inter', sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         body {
             background-color: var(--bg-color);
-            color: var(--text-main);
-            height: 100vh;
+            color: var(--text-color);
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
-            padding: 15px;
-            overflow: hidden;
+            align-items: center;
+            padding: 2rem 1rem;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
         }
 
         header {
-            width: 100%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 20px;
-            background-color: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            margin-bottom: 10px;
-            height: 55px;
-        }
-
-        .logo {
-            font-size: 1.2rem;
-            font-weight: 700;
-        }
-
-        .logo span {
-            color: var(--accent-color);
-        }
-
-        .streak-badge {
-            background-color: rgba(249, 115, 22, 0.1);
-            border: 1px solid rgba(249, 115, 22, 0.3);
-            color: var(--fire-color);
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-weight: 600;
-            font-size: 0.85rem;
-        }
-
-        /* MOTİVASYON SÖZÜ BANNERI */
-        .quote-banner {
-            width: 100%;
-            background-color: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-left: 4px solid var(--accent-color);
-            border-radius: 8px;
-            padding: 8px 16px;
-            margin-bottom: 12px;
             text-align: center;
         }
 
-        .quote-text {
-            font-size: 0.88rem;
-            font-weight: 600;
-            color: #e2e8f0;
-            letter-spacing: 0.3px;
+        header h1 {
+            font-size: 2.2rem;
+            color: var(--accent);
+            margin-bottom: 0.5rem;
         }
 
-        .quote-author {
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            margin-left: 8px;
-            font-style: italic;
+        header p {
+            color: var(--text-secondary);
         }
 
-        /* GRID DÜZENİ */
-        main {
-            width: 100%;
-            flex: 1;
-            display: grid;
-            grid-template-columns: 280px 1fr 340px;
-            gap: 12px;
-            min-height: 0;
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
 
-        /* SOL PANEL */
-        .left-panel {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
+        /* İstatistikler */
         .stats-grid {
             display: grid;
-            grid-template-columns: 1fr;
-            gap: 8px;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
         }
 
-        .stat-card {
-            background-color: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 12px 15px;
-            text-align: center;
-        }
-
-        .stat-card h3 {
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 4px;
-        }
-
-        .stat-card .value {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--accent-color);
-        }
-
-        .analytics-card {
-            background-color: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 15px;
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .analytics-card h2 {
-            font-size: 0.9rem;
-            color: var(--text-main);
-            margin-bottom: 10px;
-        }
-
-        .bar-chart {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-            flex: 1;
-            gap: 6px;
-            padding-top: 10px;
-        }
-
-        .bar-container {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            height: 100%;
-            justify-content: flex-end;
-        }
-
-        .bar {
-            width: 100%;
-            background-color: var(--accent-color);
-            border-radius: 4px 4px 0 0;
-            transition: height 0.4s ease;
-            min-height: 4px;
-            opacity: 0.85;
-        }
-
-        .bar-container.active .bar {
-            background-color: var(--fire-color);
-            opacity: 1;
-        }
-
-        .bar-label {
-            font-size: 0.65rem;
-            color: var(--text-muted);
-            margin-top: 6px;
-        }
-
-        .bar-val {
-            font-size: 0.65rem;
-            color: var(--text-muted);
-            margin-bottom: 2px;
-        }
-
-        /* ORTA PANEL: POMODORO SAYAÇ */
-        .timer-card {
-            background-color: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            position: relative;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
-        }
-
-        .fullscreen-toggle {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--border-color);
-            color: var(--text-muted);
-            padding: 6px 12px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 0.8rem;
-            transition: all 0.2s;
-        }
-
-        .fullscreen-toggle:hover {
-            color: var(--text-main);
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        .mode-buttons {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-
-        .mode-btn {
-            background: transparent;
-            border: 1px solid var(--border-color);
-            color: var(--text-muted);
-            padding: 6px 14px;
+        .stat-box {
+            background: rgba(15, 23, 42, 0.5);
+            padding: 1rem;
             border-radius: 8px;
-            cursor: pointer;
-            font-size: 0.85rem;
-            font-weight: 600;
-            transition: all 0.2s;
+            text-align: center;
+            border: 1px solid var(--border);
         }
 
-        .mode-btn.active {
-            background-color: var(--accent-color);
-            color: white;
-            border-color: var(--accent-color);
+        .stat-box h3 {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-box span {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--success);
+        }
+
+        /* Sayaç Bölümü */
+        .timer-section {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
         }
 
         .timer-display {
-            font-size: 5rem;
-            font-weight: 700;
+            font-size: 3.5rem;
+            font-weight: bold;
             letter-spacing: 2px;
-            margin: 15px 0;
-            font-variant-numeric: tabular-nums;
+            color: var(--text-color);
         }
 
-        .controls {
+        .btn-group {
             display: flex;
-            gap: 12px;
+            gap: 1rem;
         }
 
-        .btn {
-            padding: 10px 24px;
-            font-size: 0.95rem;
-            font-weight: 600;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: transform 0.1s;
-        }
-
-        .btn:active {
-            transform: scale(0.96);
-        }
-
-        .btn-start {
-            background-color: var(--accent-color);
+        button {
+            background-color: var(--accent);
             color: white;
-        }
-
-        .btn-reset {
-            background-color: transparent;
-            border: 1px solid var(--border-color);
-            color: var(--text-muted);
-        }
-
-        /* SAĞ PANEL: GÖREV LİSTESİ */
-        .todo-card {
-            background-color: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
-            padding: 15px;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .todo-card h2 {
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
             font-size: 1rem;
-            margin-bottom: 10px;
-            color: var(--text-main);
-        }
-
-        .todo-input-container {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            margin-bottom: 12px;
-        }
-
-        .todo-input-row {
-            display: flex;
-            gap: 8px;
-        }
-
-        .todo-input {
-            flex: 1;
-            background-color: var(--bg-color);
-            border: 1px solid var(--border-color);
-            padding: 8px 12px;
-            border-radius: 6px;
-            color: var(--text-main);
-            font-size: 0.85rem;
-            outline: none;
-        }
-
-        .todo-selects {
-            display: flex;
-            gap: 6px;
-        }
-
-        .todo-select {
-            flex: 1;
-            background-color: var(--bg-color);
-            border: 1px solid var(--border-color);
-            color: var(--text-main);
-            padding: 6px 8px;
-            border-radius: 6px;
-            font-size: 0.75rem;
-            outline: none;
-        }
-
-        .btn-add {
-            background-color: var(--accent-color);
-            color: white;
-            border: none;
-            padding: 0 14px;
-            border-radius: 6px;
-            font-weight: 600;
             cursor: pointer;
-            font-size: 0.85rem;
+            transition: background 0.2s;
         }
 
-        .todo-list {
+        button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        button.secondary {
+            background-color: #475569;
+        }
+        button.secondary:hover {
+            background-color: #334155;
+        }
+
+        /* Görevler Bölümü */
+        .task-input-group {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        input[type="text"] {
+            flex: 1;
+            padding: 0.75rem;
+            background: var(--bg-color);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text-color);
+            font-size: 1rem;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .task-lists {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        @media (max-width: 600px) {
+            .task-lists {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .task-column h3 {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            color: var(--text-secondary);
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 0.5rem;
+        }
+
+        ul {
             list-style: none;
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 0.5rem;
+            max-height: 250px;
             overflow-y: auto;
-            padding-right: 4px;
-            flex: 1;
         }
 
-        .todo-item {
+        li {
+            background: rgba(15, 23, 42, 0.4);
+            padding: 0.75rem;
+            border-radius: 6px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            background-color: rgba(255, 255, 255, 0.03);
-            border: 1px solid var(--border-color);
-            padding: 8px 12px;
-            border-radius: 6px;
-            gap: 10px;
+            border: 1px solid var(--border);
         }
 
-        .todo-left {
+        li.completed span {
+            text-decoration: line-through;
+            color: var(--text-secondary);
+        }
+
+        .task-left {
             display: flex;
             align-items: center;
-            gap: 8px;
-            flex: 1;
-            overflow: hidden;
+            gap: 0.75rem;
         }
 
-        /* SAĞDAKİ TIK BUTONU STİLİ */
-        .todo-check-btn {
-            width: 22px;
-            height: 22px;
-            border-radius: 6px;
-            border: 2px solid var(--border-color);
+        .delete-btn {
             background: transparent;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s;
-            flex-shrink: 0;
-            color: var(--text-muted);
-            font-size: 0.8rem;
-            font-weight: bold;
+            color: #ef4444;
+            padding: 0.2rem 0.5rem;
+            font-size: 0.9rem;
         }
-
-        .todo-check-btn:hover {
-            border-color: var(--success-color);
-            color: var(--success-color);
-            background-color: rgba(34, 197, 94, 0.15);
-        }
-
-        .task-text {
-            font-size: 0.85rem;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .badge-group {
-            display: flex;
-            gap: 4px;
-            margin-left: 4px;
-        }
-
-        .badge {
-            font-size: 0.65rem;
-            padding: 2px 6px;
-            border-radius: 10px;
-            font-weight: 600;
-            white-space: nowrap;
-        }
-
-        .badge-category {
-            background-color: rgba(99, 102, 241, 0.15);
-            color: #a5b4fc;
-        }
-
-        .badge-priority-high {
-            background-color: rgba(239, 68, 68, 0.15);
-            color: #fca5a5;
-        }
-
-        .badge-priority-mid {
-            background-color: rgba(234, 179, 8, 0.15);
-            color: #fde047;
-        }
-
-        .badge-priority-low {
-            background-color: rgba(34, 197, 94, 0.15);
-            color: #86efac;
-        }
-
-        .empty-state {
-            text-align: center;
-            color: var(--text-muted);
-            font-size: 0.8rem;
-            padding: 15px 0;
-        }
-
-        /* ZEN MODE (TAM EKRAN) */
-        .timer-card.zen-mode {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            z-index: 9999;
-            border-radius: 0;
-            border: none;
-            background-color: var(--bg-color);
-        }
-
-        .timer-card.zen-mode .timer-display {
-            font-size: 14rem;
-            margin: 40px 0;
-        }
-
-        .timer-card.zen-mode .mode-btn {
-            font-size: 1.1rem;
-            padding: 10px 20px;
-        }
-
-        .timer-card.zen-mode .btn {
-            padding: 16px 40px;
-            font-size: 1.2rem;
+        .delete-btn:hover {
+            background: rgba(239, 68, 68, 0.1);
         }
     </style>
 </head>
 <body>
 
-    <header>
-        <div class="logo">🧪 Focus<span>Lab</span></div>
-        <div class="streak-badge">🔥 <span id="streak-count">1</span> Günlük Seri</div>
-    </header>
+    <div class="container">
+        <header>
+            <h1>GetFocusLab</h1>
+            <p>Disiplin ve Odak Takip Sistemi</p>
+        </header>
 
-    <!-- MOTİVASYON BANNERI -->
-    <div class="quote-banner">
-        <span class="quote-text">"Hiçbir şeye ihtiyacımız yoktur, yalnız bir şeye ihtiyacımız vardır: Çalışkan olmak!"</span>
-        <span class="quote-author">— K. Atatürk</span>
+        <!-- İstatistikler -->
+        <div class="card stats-grid">
+            <div class="stat-box">
+                <h3>7 Günlük Performans</h3>
+                <span id="perfCount">0</span>
+            </div>
+            <div class="stat-box">
+                <h3>Toplam Odak Süresi</h3>
+                <span id="focusTime">0 dk</span>
+            </div>
+        </div>
+
+        <!-- 40 Dakikalık Odak Sayacı -->
+        <div class="card timer-section">
+            <h2>40 Dakikalık Odak Oturumu</h2>
+            <div class="timer-display" id="timer">40:00</div>
+            <div class="btn-group">
+                <button id="startTimerBtn">Başlat</button>
+                <button id="resetTimerBtn" class="secondary">Sıfırla</button>
+            </div>
+        </div>
+
+        <!-- Görev Yönetimi -->
+        <div class="card">
+            <div class="task-input-group">
+                <input type="text" id="taskInput" placeholder="Yeni bir görev ekle...">
+                <button id="addTaskBtn">Ekle</button>
+            </div>
+
+            <div class="task-lists">
+                <div class="task-column">
+                    <h3>Aktif Görevler</h3>
+                    <ul id="activeTasksList"></ul>
+                </div>
+                <div class="task-column">
+                    <h3>Tamamlanan Görevler</h3>
+                    <ul id="completedTasksList"></ul>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <main>
-        <!-- SOL PANEL -->
-        <div class="left-panel">
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <h3>Bugün Tamamlanan</h3>
-                    <div class="value" id="pomo-count">0</div>
-                </div>
-                <div class="stat-card">
-                    <h3>Toplam Odak Süresi</h3>
-                    <div class="value" id="total-time">0 dk</div>
-                </div>
-            </div>
-
-            <div class="analytics-card">
-                <h2>📊 Son 7 Günlük Performans</h2>
-                <div class="bar-chart" id="bar-chart"></div>
-            </div>
-        </div>
-
-        <!-- ORTA PANEL: SAYAÇ -->
-        <div class="timer-card" id="timer-card">
-            <button class="fullscreen-toggle" onclick="toggleFullscreen()">⛶ Tam Ekran</button>
-            
-            <div class="mode-buttons">
-                <button class="mode-btn active" id="mode-work" onclick="setMode('work')">🎯 Odak (40dk)</button>
-                <button class="mode-btn" id="mode-break" onclick="setMode('break')">☕ Mola (10dk)</button>
-            </div>
-
-            <div class="timer-display" id="timer">40:00</div>
-
-            <div class="controls">
-                <button class="btn btn-start" id="start-btn" onclick="toggleTimer()">Başlat</button>
-                <button class="btn btn-reset" onclick="resetTimer()">Sıfırla</button>
-            </div>
-        </div>
-
-        <!-- SAĞ PANEL: GÖREV LİSTESİ -->
-        <div class="todo-card">
-            <h2>📋 Görevler</h2>
-            <div class="todo-input-container">
-                <div class="todo-input-row">
-                    <input type="text" id="todo-input" class="todo-input" placeholder="Yeni görev..." onkeypress="handleKeyPress(event)">
-                    <button class="btn-add" onclick="addTodo()">Ekle</button>
-                </div>
-                <div class="todo-selects">
-                    <select id="todo-category" class="todo-select">
-                        <option value="Ders">📚 Ders</option>
-                        <option value="Proje">💻 Proje</option>
-                        <option value="Sınav">📝 Sınav</option>
-                        <option value="Kişisel">👤 Kişisel</option>
-                    </select>
-                    <select id="todo-priority" class="todo-select">
-                        <option value="Yüksek">🔴 Yüksek</option>
-                        <option value="Orta" selected>🟡 Orta</option>
-                        <option value="Düşük">🟢 Düşük</option>
-                    </select>
-                </div>
-            </div>
-            <ul id="todo-list" class="todo-list"></ul>
-        </div>
-    </main>
-
     <script>
-        /* --- GEÇMİŞ İSTATİSTİKLERİ --- */
-        const TODAY_KEY = new Date().toISOString().split('T')[0];
-        let historyData = JSON.parse(localStorage.getItem('focuslab_history')) || {};
-        if (!historyData[TODAY_KEY]) historyData[TODAY_KEY] = 0;
+        // --- VERİ YÖNETİMİ ---
+        let state = JSON.parse(localStorage.getItem('focusLabState')) || {
+            performanceCount: 0,
+            totalFocusMinutes: 0,
+            tasks: []
+        };
 
-        function updateStatsDisplay() {
-            const todayPomos = historyData[TODAY_KEY] || 0;
-            document.getElementById('pomo-count').textContent = todayPomos;
+        function saveState() {
+            localStorage.setItem('focusLabState', JSON.stringify(state));
+        }
+
+        function updateUI() {
+            document.getElementById('perfCount').textContent = state.performanceCount;
+            document.getElementById('focusTime').textContent = state.totalFocusMinutes + ' dk';
+
+            const activeList = document.getElementById('activeTasksList');
+            const completedList = document.getElementById('completedTasksList');
             
-            let totalPomosAllTime = 0;
-            Object.values(historyData).forEach(val => totalPomosAllTime += val);
-            document.getElementById('total-time').textContent = `${totalPomosAllTime * 40} dk`;
+            activeList.innerHTML = '';
+            completedList.innerHTML = '';
 
-            renderChart();
-        }
+            state.tasks.forEach((task, index) => {
+                const li = document.createElement('li');
+                if (task.completed) li.classList.add('completed');
 
-        function renderChart() {
-            const chartContainer = document.getElementById('bar-chart');
-            chartContainer.innerHTML = '';
-
-            const days = [];
-            for (let i = 6; i >= 0; i--) {
-                const d = new Date();
-                d.setDate(d.getDate() - i);
-                days.push(d.toISOString().split('T')[0]);
-            }
-
-            let maxPomo = 1;
-            days.forEach(day => {
-                if ((historyData[day] || 0) > maxPomo) maxPomo = historyData[day];
-            });
-
-            days.forEach(day => {
-                const count = historyData[day] || 0;
-                const heightPercent = Math.max((count / maxPomo) * 100, 6);
-                const dayLabel = new Date(day).toLocaleDateString('tr-TR', { weekday: 'short' });
-                const isToday = day === TODAY_KEY;
-
-                const barContainer = document.createElement('div');
-                barContainer.className = `bar-container ${isToday ? 'active' : ''}`;
-                barContainer.innerHTML = `
-                    <span class="bar-val">${count}</span>
-                    <div class="bar" style="height: ${heightPercent}%;"></div>
-                    <span class="bar-label">${isToday ? 'Bgn' : dayLabel}</span>
+                li.innerHTML = `
+                    <div class="task-left">
+                        <input type="checkbox" ${task.completed ? 'checked' : ''} onclick="toggleTask(${index})">
+                        <span>${task.text}</span>
+                    </div>
+                    <button class="delete-btn" onclick="deleteTask(${index})">Sil</button>
                 `;
-                chartContainer.appendChild(barContainer);
+
+                if (task.completed) {
+                    completedList.appendChild(li);
+                } else {
+                    activeList.appendChild(li);
+                }
             });
         }
 
-        /* --- SAYAÇ, KONFETİ VE BİTİŞ MELODİSİ --- */
-        let timeLeft = 40 * 60;
-        let timerId = null;
-        let isWorkMode = true;
+        // --- GÖREV FONKSİYONLARI ---
+        function addTask() {
+            const input = document.getElementById('taskInput');
+            const text = input.value.trim();
+            if(!text) return;
 
-        const timerDisplay = document.getElementById('timer');
-        const startBtn = document.getElementById('start-btn');
-        const workBtn = document.getElementById('mode-work');
-        const breakBtn = document.getElementById('mode-break');
-        const timerCard = document.getElementById('timer-card');
-
-        function toggleFullscreen() {
-            timerCard.classList.toggle('zen-mode');
-            const isZen = timerCard.classList.contains('zen-mode');
-            document.querySelector('.fullscreen-toggle').textContent = isZen ? "✕ Küçült" : "⛶ Tam Ekran";
+            state.tasks.push({ text: text, completed: false });
+            input.value = '';
+            saveState();
+            updateUI();
         }
 
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && timerCard.classList.contains('zen-mode')) {
-                toggleFullscreen();
-            }
+        function toggleTask(index) {
+            state.tasks[index].completed = !state.tasks[index].completed;
+            saveState();
+            updateUI();
+        }
+
+        function deleteTask(index) {
+            state.tasks.splice(index, 1);
+            saveState();
+            updateUI();
+        }
+
+        document.getElementById('addTaskBtn').addEventListener('click', addTask);
+        document.getElementById('taskInput').addEventListener('keypress', (e) => {
+            if(e.key === 'Enter') addTask();
         });
 
-        function playSuccessChime() {
-            try {
-                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                const notes = [659.25, 783.99, 1046.50]; 
-                
-                const playSequence = (delayOffset) => {
-                    notes.forEach((freq, index) => {
-                        const osc = audioCtx.createOscillator();
-                        const gain = audioCtx.createGain();
+        // --- 40 DAKİKALIK SAYAÇ MANTIĞI ---
+        const FOCUS_TIME_SECONDS = 40 * 60; // 40 dakika
+        // Test etmek istersen süreyi küçültebilirsin, şimdilik gerçek 40 dakika (2400 saniye):
+        let timeLeft = FOCUS_TIME_SECONDS;
+        let timerInterval = null;
+        let isRunning = false;
 
-                        osc.type = 'triangle'; 
-                        osc.frequency.setValueAtTime(freq, audioCtx.currentTime + delayOffset + (index * 0.12));
+        const timerDisplay = document.getElementById('timer');
+        const startTimerBtn = document.getElementById('startTimerBtn');
+        const resetTimerBtn = document.getElementById('resetTimerBtn');
 
-                        gain.gain.setValueAtTime(0.4, audioCtx.currentTime + delayOffset + (index * 0.12));
-                        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + delayOffset + (index * 0.12) + 0.5);
-
-                        osc.connect(gain);
-                        gain.connect(audioCtx.destination);
-
-                        osc.start(audioCtx.currentTime + delayOffset + (index * 0.12));
-                        osc.stop(audioCtx.currentTime + delayOffset + (index * 0.12) + 0.5);
-                    });
-                };
-
-                playSequence(0);
-                playSequence(0.7);
-
-            } catch(e) {}
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
         }
 
-        function triggerConfetti() {
-            if (typeof confetti === 'function') {
-                confetti({
-                    particleCount: 120,
-                    spread: 80,
-                    origin: { y: 0.6 }
-                });
-            }
+        function updateTimerDisplay() {
+            timerDisplay.textContent = formatTime(timeLeft);
         }
 
-        function updateDisplay() {
-            const minutes = Math.floor(timeLeft / 60);
-            const seconds = timeLeft % 60;
-            const formattedTime = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-            
-            timerDisplay.textContent = formattedTime;
-            document.title = `${formattedTime} - FocusLab 🧪`;
+        function startTimer() {
+            if (isRunning) return;
+            isRunning = true;
+            startTimerBtn.textContent = 'Duraklat';
+            startTimerBtn.classList.add('secondary');
+
+            timerInterval = setInterval(() => {
+                if (timeLeft > 0) {
+                    timeLeft--;
+                    updateTimerDisplay();
+                } else {
+                    clearInterval(timerInterval);
+                    isRunning = false;
+                    startTimerBtn.textContent = 'Başlat';
+                    startTimerBtn.classList.remove('secondary');
+                    
+                    // İSTEDİĞİN ÖZELLİK: 40 dk bitince performans ve odak süresi artar, görevlere dokunulmaz!
+                    state.performanceCount += 1;
+                    state.totalFocusMinutes += 40;
+                    saveState();
+                    updateUI();
+
+                    alert('Tebrikler! 40 dakikalık odak oturumu tamamlandı. Performansın ve odak süren güncellendi.');
+                    timeLeft = FOCUS_TIME_SECONDS;
+                    updateTimerDisplay();
+                }
+            }, 1000);
         }
 
-        function toggleTimer() {
-            if (timerId === null) {
-                timerId = setInterval(() => {
-                    if (timeLeft > 0) {
-                        timeLeft--;
-                        updateDisplay();
-                    } else {
-                        clearInterval(timerId);
-                        timerId = null;
-                        
-                        playSuccessChime();
-                        triggerConfetti();
-
-                        if (isWorkMode) {
-                            historyData[TODAY_KEY] = (historyData[TODAY_KEY] || 0) + 1;
-                            localStorage.setItem('focuslab_history', JSON.stringify(historyData));
-                            updateStatsDisplay();
-                            alert("Tebrikler! 40 dakikalık odaklanma oturumu tamamlandı! 🎉");
-                        } else {
-                            alert("Mola süresi doldu, yeni bir oturuma hazırsın! 💪");
-                        }
-
-                        startBtn.textContent = "Başlat";
-                        startBtn.style.backgroundColor = "var(--accent-color)";
-                    }
-                }, 1000);
-                startBtn.textContent = "Durdur";
-                startBtn.style.backgroundColor = "var(--danger-color)";
-            } else {
-                clearInterval(timerId);
-                timerId = null;
-                startBtn.textContent = "Devam Et";
-                startBtn.style.backgroundColor = "var(--accent-color)";
-            }
+        function pauseTimer() {
+            clearInterval(timerInterval);
+            isRunning = false;
+            startTimerBtn.textContent = 'Devam Et';
+            startTimerBtn.classList.remove('secondary');
         }
 
         function resetTimer() {
-            clearInterval(timerId);
-            timerId = null;
-            timeLeft = isWorkMode ? 40 * 60 : 10 * 60;
-            startBtn.textContent = "Başlat";
-            startBtn.style.backgroundColor = "var(--accent-color)";
-            updateDisplay();
+            clearInterval(timerInterval);
+            isRunning = false;
+            timeLeft = FOCUS_TIME_SECONDS;
+            updateTimerDisplay();
+            startTimerBtn.textContent = 'Başlat';
+            startTimerBtn.classList.remove('secondary');
         }
 
-        function setMode(mode) {
-            if (mode === 'work') {
-                isWorkMode = true;
-                timeLeft = 40 * 60;
-                workBtn.classList.add('active');
-                breakBtn.classList.remove('active');
+        startTimerBtn.addEventListener('click', () => {
+            if (isRunning) {
+                pauseTimer();
             } else {
-                isWorkMode = false;
-                timeLeft = 10 * 60;
-                breakBtn.classList.add('active');
-                workBtn.classList.remove('active');
+                startTimer();
             }
-            resetTimer();
-        }
+        });
 
-        /* --- GÖREV LİSTESİ --- */
-        let todos = JSON.parse(localStorage.getItem('focuslab_todos')) || [];
+        resetTimerBtn.addEventListener('click', resetTimer);
 
-        function saveTodos() {
-            localStorage.setItem('focuslab_todos', JSON.stringify(todos));
-        }
-
-        function renderTodos() {
-            const todoList = document.getElementById('todo-list');
-            todoList.innerHTML = '';
-
-            if (todos.length === 0) {
-                todoList.innerHTML = '<div class="empty-state">Henüz görev yok ✨</div>';
-                return;
-            }
-
-            todos.forEach((todo, index) => {
-                const li = document.createElement('li');
-                li.className = 'todo-item';
-                
-                let priorityClass = 'badge-priority-mid';
-                if (todo.priority === 'Yüksek') priorityClass = 'badge-priority-high';
-                if (todo.priority === 'Düşük') priorityClass = 'badge-priority-low';
-
-                li.innerHTML = `
-                    <div class="todo-left">
-                        <span class="task-text">${todo.text}</span>
-                        <div class="badge-group">
-                            <span class="badge badge-category">${todo.category || 'Ders'}</span>
-                            <span class="badge ${priorityClass}">${todo.priority || 'Orta'}</span>
-                        </div>
-                    </div>
-                    <button class="todo-check-btn" onclick="completeAndRemoveTodo(${index})" title="Görevi Tamamla ve Sil">✓</button>
-                `;
-                todoList.appendChild(li);
-            });
-        }
-
-        function addTodo() {
-            const input = document.getElementById('todo-input');
-            const categorySelect = document.getElementById('todo-category');
-            const prioritySelect = document.getElementById('todo-priority');
-            const text = input.value.trim();
-
-            if (text !== '') {
-                todos.push({ 
-                    text: text, 
-                    category: categorySelect.value,
-                    priority: prioritySelect.value
-                });
-                input.value = '';
-                saveTodos();
-                renderTodos();
-            }
-        }
-
-        function handleKeyPress(event) {
-            if (event.key === 'Enter') addTodo();
-        }
-
-        function completeAndRemoveTodo(index) {
-            todos.splice(index, 1);
-            saveTodos();
-            renderTodos();
-        }
-
-        renderTodos();
-        updateStatsDisplay();
+        // Sayfa açıldığında arayüzü yükle
+        updateUI();
+        updateTimerDisplay();
     </script>
 </body>
 </html>
