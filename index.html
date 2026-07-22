@@ -80,6 +80,35 @@
             gap: 20px;
         }
 
+        /* İSTATİSTİK KARTLARI */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .stat-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 15px 20px;
+            text-align: center;
+        }
+
+        .stat-card h3 {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+
+        .stat-card .value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
         /* POMODORO KARTI */
         .timer-card {
             background-color: var(--card-bg);
@@ -284,6 +313,18 @@
     </header>
 
     <main>
+        <!-- İSTATİSTİK PANANELİ -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>Tamamlanan Pomodoro</h3>
+                <div class="value" id="pomo-count">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Toplam Odak Süresi</h3>
+                <div class="value" id="total-time">0 dk</div>
+            </div>
+        </div>
+
         <!-- POMODORO SAYAÇ ALANI -->
         <div class="timer-card">
             <div class="mode-buttons">
@@ -313,7 +354,16 @@
     </main>
 
     <script>
-        /* --- SAYAÇ MANTIĞI VE SES BİLDİRİMİ --- */
+        /* --- İSTATİSTİK MANTIĞI --- */
+        let completedPomos = parseInt(localStorage.getItem('focuslab_pomos')) || 0;
+        
+        function updateStatsDisplay() {
+            document.getElementById('pomo-count').textContent = completedPomos;
+            const totalMinutes = completedPomos * 40; // Her Pomodoro 40 Dk
+            document.getElementById('total-time').textContent = `${totalMinutes} dk`;
+        }
+
+        /* --- SAYAÇ VE SES MANTIĞI --- */
         let timeLeft = 40 * 60; 
         let timerId = null;
         let isWorkMode = true;
@@ -323,7 +373,6 @@
         const workBtn = document.getElementById('mode-work');
         const breakBtn = document.getElementById('mode-break');
 
-        // Tarayıcı içi bip sesi üretici (Harici dosyaya ihtiyaç duymaz)
         function playBeep() {
             try {
                 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -331,7 +380,7 @@
                 const gainNode = audioCtx.createGain();
 
                 oscillator.type = 'sine';
-                oscillator.frequency.setValueAtTime(587.33, audioCtx.currentTime); // D5 notası
+                oscillator.frequency.setValueAtTime(587.33, audioCtx.currentTime);
                 gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
 
                 oscillator.connect(gainNode);
@@ -362,8 +411,17 @@
                     } else {
                         clearInterval(timerId);
                         timerId = null;
-                        playBeep(); // Süre bitince zil çal!
-                        alert(isWorkMode ? "40 dakikalık odaklanma süresi bitti! Mola zamanı! 🎉" : "10 dakikalık mola bitti! Çalışmaya dönme vakti. 💪");
+                        playBeep();
+
+                        if (isWorkMode) {
+                            completedPomos++;
+                            localStorage.setItem('focuslab_pomos', completedPomos);
+                            updateStatsDisplay();
+                            alert("40 dakikalık odaklanma bitti! Tebrikler, +1 Pomodoro kazandın! 🎉");
+                        } else {
+                            alert("10 dakikalık mola bitti! Çalışmaya dönme vakti. 💪");
+                        }
+
                         startBtn.textContent = "Başlat";
                     }
                 }, 1000);
@@ -461,7 +519,9 @@
             renderTodos();
         }
 
+        // Sayfa yüklendiğinde çağrılanlar
         renderTodos();
+        updateStatsDisplay();
     </script>
 </body>
 </html>
