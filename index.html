@@ -161,6 +161,119 @@
             color: var(--text-main);
             background-color: rgba(255, 255, 255, 0.05);
         }
+
+        /* GÖREV LİSTESİ KARTI */
+        .todo-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+        }
+
+        .todo-card h2 {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .todo-input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .todo-input {
+            flex: 1;
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+            padding: 12px 16px;
+            border-radius: 8px;
+            color: var(--text-main);
+            font-size: 0.95rem;
+            outline: none;
+        }
+
+        .todo-input:focus {
+            border-color: var(--accent-color);
+        }
+
+        .btn-add {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 0 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .btn-add:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .todo-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .todo-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+            padding: 12px 16px;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .todo-item.completed span {
+            text-decoration: line-through;
+            color: var(--text-muted);
+        }
+
+        .todo-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+        }
+
+        .todo-checkbox {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--accent-color);
+            cursor: pointer;
+        }
+
+        .btn-delete {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 1.1rem;
+            padding: 4px 8px;
+            border-radius: 4px;
+            transition: color 0.2s;
+        }
+
+        .btn-delete:hover {
+            color: var(--danger-color);
+        }
+
+        .empty-state {
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            padding: 15px 0;
+        }
     </style>
 </head>
 <body>
@@ -185,11 +298,23 @@
                 <button class="btn btn-reset" onclick="resetTimer()">Sıfırla</button>
             </div>
         </div>
+
+        <!-- GÖREV LİSTESİ ALANI -->
+        <div class="todo-card">
+            <h2>📋 Bugünkü Görevler</h2>
+            <div class="todo-input-group">
+                <input type="text" id="todo-input" class="todo-input" placeholder="Yeni bir görev yazın ve Enter'a basın..." onkeypress="handleKeyPress(event)">
+                <button class="btn-add" onclick="addTodo()">Ekle</button>
+            </div>
+            <ul id="todo-list" class="todo-list">
+                <!-- Görevler JS ile buraya eklenecek -->
+            </ul>
+        </div>
     </main>
 
-    <!-- SAYAÇ ÇALIŞMA MANTIĞI (JAVASCRIPT) -->
     <script>
-        let timeLeft = 40 * 60; // 40 Dakika (Saniye cinsinden)
+        /* --- SAYAÇ MANTIĞI --- */
+        let timeLeft = 40 * 60; 
         let timerId = null;
         let isWorkMode = true;
 
@@ -209,7 +334,6 @@
 
         function toggleTimer() {
             if (timerId === null) {
-                // Başlat
                 timerId = setInterval(() => {
                     if (timeLeft > 0) {
                         timeLeft--;
@@ -224,7 +348,6 @@
                 startBtn.textContent = "Durdur";
                 startBtn.style.backgroundColor = "var(--danger-color)";
             } else {
-                // Durdur
                 clearInterval(timerId);
                 timerId = null;
                 startBtn.textContent = "Devam Et";
@@ -255,6 +378,69 @@
             }
             resetTimer();
         }
+
+        /* --- GÖREV LİSTESİ (TO-DO) MANTIĞI --- */
+        let todos = JSON.parse(localStorage.getItem('focuslab_todos')) || [];
+
+        function saveTodos() {
+            localStorage.setItem('focuslab_todos', JSON.stringify(todos));
+        }
+
+        function renderTodos() {
+            const todoList = document.getElementById('todo-list');
+            todoList.innerHTML = '';
+
+            if (todos.length === 0) {
+                todoList.innerHTML = '<div class="empty-state">Henüz eklenmiş bir görev yok. Yukarıdan ekleyebilirsin! ✨</div>';
+                return;
+            }
+
+            todos.forEach((todo, index) => {
+                const li = document.createElement('li');
+                li.className = `todo-item ${todo.completed ? 'completed' : ''}`;
+                li.innerHTML = `
+                    <div class="todo-left" onclick="toggleTodo(${index})">
+                        <input type="checkbox" class="todo-checkbox" ${todo.completed ? 'checked' : ''}>
+                        <span>${todo.text}</span>
+                    </div>
+                    <button class="btn-delete" onclick="deleteTodo(${index})">🗑️</button>
+                `;
+                todoList.appendChild(li);
+            });
+        }
+
+        function addTodo() {
+            const input = document.getElementById('todo-input');
+            const text = input.value.trim();
+
+            if (text !== '') {
+                todos.push({ text: text, completed: false });
+                input.value = '';
+                saveTodos();
+                renderTodos();
+            }
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                addTodo();
+            }
+        }
+
+        function toggleTodo(index) {
+            todos[index].completed = !todos[index].completed;
+            saveTodos();
+            renderTodos();
+        }
+
+        function deleteTodo(index) {
+            todos.splice(index, 1);
+            saveTodos();
+            renderTodos();
+        }
+
+        // Sayfa yüklendiğinde görevleri ekrana bas
+        renderTodos();
     </script>
 </body>
 </html>
